@@ -1,0 +1,55 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {
+      "res/xml/config.xml": {
+        "parents": {
+          "/*": [
+            {
+              "xml": "<feature name=\"VIDVLivenessPlugin\"><param name=\"android-package\" value=\"cordova_plugin_vidvliveness.VIDVLivenessPlugin\" /></feature>",
+              "count": 1
+            },
+            {
+              "xml": "<feature name=\"VIDVOCRPlugin\"><param name=\"android-package\" value=\"cordova_plugin_vidvocr.VIDVOCRPlugin\" /></feature>",
+              "count": 1
+            }
+          ]
+        }
+      }
+    }
+  },
+  "installed_plugins": {
+    "cordova-plugin-vidvliveness": {
+      "PACKAGE_NAME": "com.valify.OCRLivenessCordovaSampleApp"
+    },
+    "cordova-plugin-vidvocr": {
+      "PACKAGE_NAME": "com.valify.OCRLivenessCordovaSampleApp"
+    }
+  },
+  "dependent_plugins": {},
+  "modules": [
+    {
+      "id": "cordova-plugin-vidvliveness.VIDVLivenessPlugin",
+      "file": "plugins/cordova-plugin-vidvliveness/www/VIDVLivenessPlugin.js",
+      "pluginId": "cordova-plugin-vidvliveness",
+      "clobbers": [
+        "VIDVLivenessPlugin"
+      ]
+    },
+    {
+      "id": "cordova-plugin-vidvocr.VIDVOCRPlugin",
+      "file": "plugins/cordova-plugin-vidvocr/www/VIDVOCRPlugin.js",
+      "pluginId": "cordova-plugin-vidvocr",
+      "clobbers": [
+        "VIDVOCRPlugin"
+      ]
+    }
+  ],
+  "plugin_metadata": {
+    "cordova-plugin-vidvliveness": "1.0.1",
+    "cordova-plugin-vidvocr": "2.1.7"
+  }
+}

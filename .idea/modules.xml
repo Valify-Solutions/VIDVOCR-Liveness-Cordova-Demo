@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/OCRLivenessCordovaSampleApp.iml" filepath="$PROJECT_DIR$/.idea/OCRLivenessCordovaSampleApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/cordova-plugin-vidvliveness/cordova-plugin-vidvliveness.iml" filepath="$PROJECT_DIR$/plugins/cordova-plugin-vidvliveness/cordova-plugin-vidvliveness.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/cordova-plugin-vidvocr/cordova-plugin-vidvocr.iml" filepath="$PROJECT_DIR$/plugins/cordova-plugin-vidvocr/cordova-plugin-vidvocr.iml" />
+    </modules>
+  </component>
+</project>

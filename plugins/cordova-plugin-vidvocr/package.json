@@ -1,0 +1,31 @@
+{
+  "name": "@valifysolutions/cordova-plugin-vidvocr",
+  "version": "2.1.7",
+  "description": "VIDV OCR Cordova Plugin",
+  "cordova": {
+    "id": "cordova-plugin-vidvocr",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/valify-public/vidvocrcordovaplugin.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-ios",
+    "cordova-android"
+  ],
+  "author": "Valify Solutions",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/valify-public/vidvocrcordovaplugin/issues"
+  },
+  "homepage": "https://gitlab.com/valify-public/vidvocrcordovaplugin#readme",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

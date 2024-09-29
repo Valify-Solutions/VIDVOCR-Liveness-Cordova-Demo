@@ -1,0 +1,16 @@
+dependencies {
+    implementation 'com.vidv:VIDVOCRSDK:2.8.2'
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+    maven {
+        credentials {
+            username "sdk"
+            password "sdk123456"
+        }
+        url "https://www.valifystage.com/artifactory/libs-release/"
+    }
+
+    maven { url 'https://developer.huawei.com/repo/' }
+}

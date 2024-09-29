@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cordova OCR and Liveness</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+        }
+
+        .button-container {
+          margin-bottom: 20px;
+          width: 80%;
+          text-align: center;
+        }
+
+        button {
+          padding: 10px 20px;
+          font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="button-container">
+    <button id="startValifyButton">Start Valify</button>
+</div>
+<div class="button-container">
+    <button id="startOCRButton">Start OCR</button>
+</div>
+<div class="button-container">
+    <button id="startLivenessButton">Start Liveness</button>
+</div>
+
+<script src="cordova.js"></script>
+<script src="index.js"></script>
+</body>
+</html>

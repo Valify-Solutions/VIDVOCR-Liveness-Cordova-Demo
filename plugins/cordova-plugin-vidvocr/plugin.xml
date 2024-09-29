@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-vidvocr" version="2.1.7"
+    xmlns="http://apache.org/cordova/ns/plugins/1.0">
+    <name>VIDVOCRPlugin</name>
+    <js-module name="VIDVOCRPlugin" src="www/VIDVOCRPlugin.js">
+        <clobbers target="VIDVOCRPlugin" />
+    </js-module>
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="VIDVOCRPlugin">
+                <param name="android-package" value="cordova_plugin_vidvocr.VIDVOCRPlugin" />
+            </feature>
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml" />
+        <!--<activity android:name="cordova.plugin.vidvocr.VIDVOCRPlugin" android:label="VIDVOCRPlugin">
+            <intent-filter>
+                &lt;!&ndash; We are going to use this name to start the activity later in Java &ndash;&gt;
+                <action android:name="cordova.plugin.vidvocr.VIDVOCRPlugin" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>-->
+        <source-file src="src/android/VIDVOCRPlugin.java"
+            target-dir="src/cordova/plugin/vidvocr/VIDVOCRPlugin" />
+        <source-file src="src/android/VIDVOCRActivity.java"
+            target-dir="src/cordova/plugin/vidvocr" />
+        <framework custom="true" src="src/android/vidvocr-gradle.gradle" type="gradleReference" />
+    </platform>
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="VIDVOCRPlugin">
+                <param name="ios-package" value="VIDVOCRPlugin" />
+            </feature>
+        </config-file>
+        <source-file src="src/ios/VIDVOCRPlugin.m" />
+        <source-file src="src/ios/VIDVOCRInitializer.swift" target-dir="src/cordova/plugin/" />
+        <podspec>
+            <pods use-frameworks="true">
+                <pod name="VIDVOCR" spec="=2.8.1" />
+            </pods>
+        </podspec>
+    </platform>
+</plugin>

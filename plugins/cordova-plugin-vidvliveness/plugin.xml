@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-vidvliveness" version="1.0.1"
+    xmlns="http://apache.org/cordova/ns/plugins/1.0">
+    <name>VIDVLivenessPlugin</name>
+    <js-module name="VIDVLivenessPlugin" src="www/VIDVLivenessPlugin.js">
+        <clobbers target="VIDVLivenessPlugin" />
+    </js-module>
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="VIDVLivenessPlugin">
+                <param name="android-package"
+                    value="cordova_plugin_vidvliveness.VIDVLivenessPlugin" />
+            </feature>
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml" />
+        <source-file src="src/android/VIDVLivenessPlugin.java"
+            target-dir="src/cordova/plugin/vidvliveness/VIDVLivenessPlugin" />
+        <source-file src="src/android/VIDVLivenessActivity.java"
+            target-dir="src/cordova/plugin/vidvliveness" />
+        <framework custom="true" src="src/android/vidvliveness-gradle.gradle"
+            type="gradleReference" />
+    </platform>
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="VIDVLivenessPlugin">
+                <param name="ios-package" value="VIDVLivenessPlugin" />
+            </feature>
+        </config-file>
+        <source-file src="src/ios/VIDVLivenessPlugin.m" />
+        <source-file src="src/ios/VIDVLivenessInitializer.swift" target-dir="src/cordova/plugin/" />
+        <podspec>
+            <pods use-frameworks="true">
+                <pod name="VIDVLiveness" spec="=2.2.0" />
+            </pods>
+        </podspec>
+    </platform>
+</plugin>
