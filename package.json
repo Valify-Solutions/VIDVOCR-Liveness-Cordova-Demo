@@ -1,0 +1,31 @@
+{
+  "name": "com.valify.ocrlivenesscordovasampleapp",
+  "displayName": "OCRLivenessCordovaSampleApp",
+  "version": "1.0.0",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Apache Cordova Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@valifysolutions/cordova-plugin-vidvliveness": "^1.0.1",
+    "@valifysolutions/cordova-plugin-vidvocr": "^2.1.7",
+    "cordova-android": "^13.0.0",
+    "cordova-ios": "^7.1.1"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-vidvliveness": {},
+      "cordova-plugin-vidvocr": {}
+    },
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  }
+}
