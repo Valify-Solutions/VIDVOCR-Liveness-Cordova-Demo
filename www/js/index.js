@@ -1,29 +1,135 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+document.addEventListener('deviceready', function () {
+  const creds = {
+    baseURL: '', // Replace with your actual base URL
+    bundleKey: '', // Replace with your actual bundle key
+    userName: '', // Replace with actual credentials
+    password: '',
+    clientID: '',
+    clientSecret: '',
+  };
 
-// Wait for the deviceready event before using any of Cordova's device APIs.
-// See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
-document.addEventListener('deviceready', onDeviceReady, false);
+  // Function to fetch token
+  const getToken = async () => {
+    const url = `${creds.baseURL}/api/o/token/`;
+    const body = `username=${creds.userName}&password=${creds.password}&client_id=${creds.clientID}&client_secret=${creds.clientSecret}&grant_type=password`;
 
-function onDeviceReady() {
-    // Cordova is now initialized. Have fun!
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body,
+      });
 
-    console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-    document.getElementById('deviceready').classList.add('ready');
-}
+      if (response.ok) {
+        const jsonResponse = await response.json();
+        return jsonResponse.access_token;
+      } else {
+        throw new Error('Failed to retrieve token');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error: Could not generate token');
+      return null;
+    }
+  };
+
+  const startValify = async () => {
+    const token = await getToken();
+
+    if (token) {
+      // OCR parameters
+      const ocrParams = {
+        access_token: token,
+        base_url: creds.baseURL,
+        bundle_key: creds.bundleKey,
+        language: 'en',
+        review_data: true
+      };
+
+     window.VIDVOCRPlugin.startOCR(ocrParams, function (ocrResponse) {
+        console.log('OCR Result:', ocrResponse);
+        const parsedResponse = typeof ocrResponse === 'string' ? JSON.parse(ocrResponse) : ocrResponse;
+
+        if (parsedResponse.nameValuePairs?.state === 'SUCCESS') {
+          const transactionIdFront = parsedResponse.nameValuePairs?.ocrResult?.ocrResult?.transactionIdFront;
+          if (transactionIdFront) {
+            setTimeout(() => {
+              const livenessParams = {
+                access_token: token,
+                base_url: creds.baseURL,
+                bundle_key: creds.bundleKey,
+                language: 'en',
+                facematch_ocr_transactionId: transactionIdFront
+              };
+
+              window.VIDVLivenessPlugin.startLiveness(livenessParams, function (livenessResponse) {
+                console.log('Liveness Result:', livenessResponse);
+                alert('Liveness completed successfully');
+              }, function (livenessError) {
+                console.error('Liveness Error:', livenessError);
+                alert('Error: Liveness failed');
+              });
+            }, 2000); // Delay for 2 seconds
+          } else {
+            alert('Transaction ID not found in OCR response');
+          }
+        } else {
+          console.log('Current OCR state is not SUCCESS');
+        }
+      }, function (ocrError) {
+        console.error('OCR Error:', ocrError);
+        alert('Error: OCR failed');
+      });
+    }
+  };
+
+  const startOCR = async () => {
+    const token = await getToken();
+
+    if (token) {
+      const ocrParams = {
+        access_token: token,
+        base_url: creds.baseURL,
+        bundle_key: creds.bundleKey,
+        language: 'en',
+        review_data: true
+      };
+
+      window.VIDVOCRPlugin.startOCR(ocrParams, function (ocrResponse) {
+        console.log('OCR Result:', ocrResponse);
+        alert('OCR completed successfully');
+      }, function (ocrError) {
+        console.error('OCR Error:', ocrError);
+        alert('Error: OCR failed');
+      });
+    }
+  };
+
+  const startLiveness = async () => {
+    const token = await getToken();
+
+    if (token) {
+      const livenessParams = {
+        access_token: token,
+        base_url: creds.baseURL,
+        bundle_key: creds.bundleKey,
+        language: 'en'
+      };
+
+      window.VIDVLivenessPlugin.startLiveness(livenessParams, function (livenessResponse) {
+        console.log('Liveness Result:', livenessResponse);
+        alert('Liveness completed successfully');
+      }, function (livenessError) {
+        console.error('Liveness Error:', livenessError);
+        alert('Error: Liveness failed');
+      });
+    }
+  };
+
+  // Button handlers
+  document.getElementById('startValifyButton').addEventListener('click', startValify);
+  document.getElementById('startOCRButton').addEventListener('click', startOCR);
+  document.getElementById('startLivenessButton').addEventListener('click', startLiveness);
+});

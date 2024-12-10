@@ -17,179 +17,177 @@ import com.google.gson.Gson;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
+import me.vidv.vidvlivenesssdk.sdk.VIDVDetectedFace;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import cordova_plugin_vidvliveness.VIDVLivenessPlugin;
 
 public class VIDVLivenessActivity extends Activity {
+    ArrayList<VIDVDetectedFace> capturedImages = new ArrayList<VIDVDetectedFace>();
 
     private CallbackContext callbackContext;
+    private boolean servicesStarted=false;
     @Override
     protected void onStart() {
         super.onStart();
-     callbackContext = VIDVLivenessPlugin.callbackContext;
-        startService();
+        callbackContext = VIDVLivenessPlugin.callbackContext;
+        if (!servicesStarted) {
+            startService();
+            servicesStarted=true;
+        }
 
     }
 
     private void startService() {
-         VIDVLivenessConfig.Builder livenessConfig;
+        VIDVLivenessConfig.Builder livenessConfig;
         livenessConfig = new VIDVLivenessConfig.Builder()
                 .setBaseUrl(getIntent().getExtras().getString("base_url"))
                 .setAccessToken(getIntent().getExtras().getString("access_token"))
                 .setBundleKey(getIntent().getExtras().getString("bundle_key"))
                 .setLanguage(getIntent().getExtras().getString("language"));
 
-       if (getIntent().hasExtra("enable_smile")) {
-                if (!getIntent().getExtras().getBoolean("enable_smile"))
-                     livenessConfig.withoutSmile();
-            }
+        if (getIntent().hasExtra("enable_smile")) {
+            if (!getIntent().getExtras().getBoolean("enable_smile"))
+                livenessConfig.withoutSmile();
+        }
         if (getIntent().hasExtra("enable_look_left")) {
-                if (!getIntent().getExtras().getBoolean("enable_look_left"))
-                     livenessConfig.withoutLookLeft();
-            }
+            if (!getIntent().getExtras().getBoolean("enable_look_left"))
+                livenessConfig.withoutLookLeft();
+        }
         if (getIntent().hasExtra("enable_look_right")) {
-                if (!getIntent().getExtras().getBoolean("enable_look_right"))
-                     livenessConfig.withoutLookRight();
-            }
+            if (!getIntent().getExtras().getBoolean("enable_look_right"))
+                livenessConfig.withoutLookRight();
+        }
         if (getIntent().hasExtra("enable_close_eyes")) {
-                if (!getIntent().getExtras().getBoolean("enable_close_eyes"))
-                     livenessConfig.withoutCloseEyes();
-            }
+            if (!getIntent().getExtras().getBoolean("enable_close_eyes"))
+                livenessConfig.withoutCloseEyes();
+        }
 
-        
+
         if (getIntent().hasExtra("liveness_number_of_instructions")) {
-                livenessConfig
-                        .setNumberOfInstructions(getIntent().getExtras().getInt("liveness_number_of_instructions"));
-            }
-        if (getIntent().hasExtra("liveness_number_of_failed_trials")) {
-                livenessConfig
-                        .setFailTrials(getIntent().getExtras().getInt("liveness_number_of_failed_trials"));
-            }
+            livenessConfig
+                    .setNumberOfInstructions(getIntent().getExtras().getInt("liveness_number_of_instructions"));
+        }
+
         if (getIntent().hasExtra("liveness_time_per_action")) {
-                livenessConfig.setInstructionTimer(getIntent().getExtras().getInt("liveness_time_per_action"));
-            }
+            livenessConfig.setInstructionTimer(getIntent().getExtras().getInt("liveness_time_per_action"));
+        }
         if (getIntent().hasExtra("enable_voiceover")) {
-                if(!getIntent().getExtras().getBoolean("enable_voiceover"))
-                     livenessConfig.withoutVoiceOver();
-            }
+            if(!getIntent().getExtras().getBoolean("enable_voiceover"))
+                livenessConfig.withoutVoiceOver();
+        }
         if (getIntent().hasExtra("facematch_ocr_transactionId")) {
-                livenessConfig
-                        .setFrontTransactionId(getIntent().getExtras().getString("facematch_ocr_transactionId"));
-            }
+            livenessConfig
+                    .setFrontTransactionId(getIntent().getExtras().getString("facematch_ocr_transactionId"));
+        }
         else if (getIntent().hasExtra("facematch_image")) {
-                livenessConfig
-                        .setFaceMatchImage((byte[]) getIntent().getExtras().get("facematch_image"));
-            }
+            livenessConfig
+                    .setFaceMatchImage((byte[]) getIntent().getExtras().get("facematch_image"));
+        }
 
         if (getIntent().hasExtra("show_error_message")) {
-                livenessConfig.showErrorDialogs(getIntent().getExtras().getBoolean("show_error_message"));
-            }
-      
+            livenessConfig.showErrorDialogs(getIntent().getExtras().getBoolean("show_error_message"));
+        }
+
         if (getIntent().hasExtra("primary_color") && !getIntent().getExtras().getString("primary_color").equals("")) {
-                livenessConfig.setPrimaryColor(Color.parseColor(getIntent().getExtras().getString("primary_color")));
-            }
+            livenessConfig.setPrimaryColor(Color.parseColor(getIntent().getExtras().getString("primary_color")));
+        }
 
         if (getIntent().hasExtra("headers")) {
             livenessConfig.setHeaders((HashMap<String, String>) getIntent().getExtras().get("headers"));
         }
 
-            livenessConfig.start(this, new VIDVLivenessListener() {
+        livenessConfig.start(this, new VIDVLivenessListener() {
 
-                @Override
-                public void onLivenessResult(VIDVLivenessResponse livenessResponse) {
-                    if(livenessResponse instanceof Success){
+            @Override
+            public void onLivenessResult(VIDVLivenessResponse livenessResponse) {
+                if(livenessResponse instanceof Success){
 
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("state", "SUCCESS");
-                            jsonObject.put("livenessResult", ((Success) livenessResponse).vidvLivenessResult);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        String jsonInString = new Gson().toJson(jsonObject);
-
-                        PluginResult resultado = new PluginResult(PluginResult.Status.OK, jsonInString);
-
-                        resultado.setKeepCallback(true);
-                        callbackContext.sendPluginResult(resultado);
-
-                        finish();// Exit of this activity !
-                    }else if (livenessResponse instanceof BuilderError){
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("state", "ERROR");
-                            jsonObject.put("errorCode", ((BuilderError) livenessResponse).errorCode);
-                            jsonObject.put("errorMessage", ((BuilderError) livenessResponse).errorMessage);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        String jsonInString = new Gson().toJson(jsonObject);
-
-                        PluginResult resultado = new PluginResult(PluginResult.Status.ERROR, jsonInString);
-
-                        resultado.setKeepCallback(true);
-                        callbackContext.sendPluginResult(resultado);
-
-                        finish();// Exit of this activity !
-                    }else if (livenessResponse instanceof ServiceFailure){
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("state", "FAILURE");
-                            jsonObject.put("livenessResult", ((ServiceFailure) livenessResponse).vidvLivenessResult);
-                            jsonObject.put("errorCode", ((ServiceFailure) livenessResponse).errorCode);
-                            jsonObject.put("errorMessage", ((ServiceFailure) livenessResponse).errorMessage);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        String jsonInString = new Gson().toJson(jsonObject);
-
-                        PluginResult resultado = new PluginResult(PluginResult.Status.ERROR, jsonInString);
-
-                        resultado.setKeepCallback(true);
-                        callbackContext.sendPluginResult(resultado);
-
-                        finish();// Exit of this activity !
-                    }else if (livenessResponse instanceof UserExit){
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("state", "EXIT");
-                            jsonObject.put("livenessResult", ((UserExit) livenessResponse).vidvLivenessResult);
-                            jsonObject.put("step", ((UserExit) livenessResponse).step);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        String jsonInString = new Gson().toJson(jsonObject);
-
-                        PluginResult resultado = new PluginResult(PluginResult.Status.ERROR, jsonInString);
-
-                        resultado.setKeepCallback(true);
-                        callbackContext.sendPluginResult(resultado);
-
-                        finish();// Exit of this activity !
-                    }else if (livenessResponse instanceof CapturedActions){
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put("state", "CAPTURED_IMAGES");
-                        jsonObject.put("capturedImage", ((CapturedActions) livenessResponse).detectedFace);
-                      
+                        jsonObject.put("state", "SUCCESS");
+                        if (capturedImages!=null){
+                            jsonObject.put("capturedImages", capturedImages);
+                        }
+                        jsonObject.put("livenessResult", ((Success) livenessResponse).vidvLivenessResult);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     String jsonInString = new Gson().toJson(jsonObject);
 
-                    PluginResult resultado = new PluginResult(PluginResult.Status.OK , jsonInString);
+                    PluginResult resultado = new PluginResult(PluginResult.Status.OK, jsonInString);
 
                     resultado.setKeepCallback(true);
                     callbackContext.sendPluginResult(resultado);
-                }
-                }
 
-            });
+                    finish();// Exit of this activity !
+                }else if (livenessResponse instanceof BuilderError){
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("state", "ERROR");
+                        jsonObject.put("errorCode", ((BuilderError) livenessResponse).errorCode);
+                        jsonObject.put("errorMessage", ((BuilderError) livenessResponse).errorMessage);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    String jsonInString = new Gson().toJson(jsonObject);
 
-         
+                    PluginResult resultado = new PluginResult(PluginResult.Status.ERROR, jsonInString);
+
+                    resultado.setKeepCallback(true);
+                    callbackContext.sendPluginResult(resultado);
+
+                    finish();// Exit of this activity !
+                }else if (livenessResponse instanceof ServiceFailure){
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("state", "FAILURE");
+                        jsonObject.put("livenessResult", ((ServiceFailure) livenessResponse).vidvLivenessResult);
+                        jsonObject.put("errorCode", ((ServiceFailure) livenessResponse).errorCode);
+                        jsonObject.put("errorMessage", ((ServiceFailure) livenessResponse).errorMessage);
+                        if (capturedImages!=null){
+                            jsonObject.put("capturedImages", capturedImages);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    String jsonInString = new Gson().toJson(jsonObject);
+
+                    PluginResult resultado = new PluginResult(PluginResult.Status.ERROR, jsonInString);
+
+                    resultado.setKeepCallback(true);
+                    callbackContext.sendPluginResult(resultado);
+
+                    finish();// Exit of this activity !
+                }else if (livenessResponse instanceof UserExit){
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("state", "EXIT");
+                        jsonObject.put("livenessResult", ((UserExit) livenessResponse).vidvLivenessResult);
+                        jsonObject.put("step", ((UserExit) livenessResponse).step);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    String jsonInString = new Gson().toJson(jsonObject);
+
+                    PluginResult resultado = new PluginResult(PluginResult.Status.ERROR, jsonInString);
+
+                    resultado.setKeepCallback(true);
+                    callbackContext.sendPluginResult(resultado);
+
+                    finish();// Exit of this activity !
+                }else if (livenessResponse instanceof CapturedActions){
+
+                    capturedImages.add(((CapturedActions) livenessResponse).detectedFace);
+                }
+            }
+
+        });
+
+
 
     }
 }

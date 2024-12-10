@@ -1,6 +1,6 @@
  dependencies {
 
-    implementation 'com.vidv:VIDVLivenessSDK:2.2.0'
+    implementation 'com.vidv:VIDVLivenessSDK:3.0.2'
 }
 
     repositories {
